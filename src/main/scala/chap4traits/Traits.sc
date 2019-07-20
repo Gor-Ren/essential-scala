@@ -43,12 +43,12 @@ def older(v1: Visitor, v2: Visitor): Boolean = {
 
 
 // Exercise 4.1.4.1
-trait Feline {
+trait Feline1 {  // added '1' to end due to worksheet clashes
   def colour: String
   def sound: String
 }
 
-abstract class BigCat extends Feline {
+abstract class BigCat extends Feline1 {
   override val sound: String = "roar"
 }
 
@@ -60,7 +60,7 @@ case class Lion(colour: String, maneSize: Int) extends BigCat {
 
 case class Tiger(colour: String) extends BigCat
 
-case class Cat(colour: String, favouriteFood: String) extends Feline {
+case class Cat(colour: String, favouriteFood: String) extends Feline1 {
   override val sound: String = "meow"
 }
 

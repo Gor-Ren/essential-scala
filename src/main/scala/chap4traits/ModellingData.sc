@@ -154,3 +154,77 @@ assert(Calculator.+(Failure("Badness"), 1) == Failure("Badness"))
 assert(Calculator./(Success(4), 2) == Success(2))
 assert(Calculator./(Success(4), 0) == Failure("Division by zero"))
 assert(Calculator./(Failure("Badness"), 0) == Failure("Badness"))
+
+
+/* Recursive Data Types */
+sealed trait IntList
+
+case object End extends IntList
+final case class IntsPair(head: Int, tail: IntList) extends IntList
+
+// exercise
+def sum(list: IntList): Int =
+  list match {
+    case IntsPair(h, t) => h + sum(t)
+    case End => 0  // the base case - returns the identity of the function
+  }
+
+// the identity is an element that doesn't change the result:
+//   a + 0 = a
+//   a * 1 = a
+//   a ^ 1 = a
+// etc.
+
+val example = IntsPair(1, IntsPair(2, IntsPair(3, End)))
+assert(sum(example) == 6)
+assert(sum(example.tail) == 5)
+assert(sum(End) == 0)
+
+def length(list: IntList): Int =
+  list match {
+    case End => 0
+    case IntsPair(_, tail) => 1 + length(tail)
+  }
+
+// length tests
+assert(length(example) == 3)
+assert(length(example.tail) == 2)
+assert(length(End) == 0)
+
+def double(list: IntList): IntList =
+  list match {
+    case End => End
+    case IntsPair(hd, tl) => IntsPair(hd * 2, double(tl))
+  }
+
+assert(double(example) == IntsPair(2, IntsPair(4, IntsPair(6, End))))
+assert(double(example.tail) == IntsPair(4, IntsPair(6, End)))
+assert(double(End) == End)
+
+// Tree exercise
+sealed trait IntTree {
+  def sum: Int
+  def double: IntTree
+}
+final case class Leaf(value: Int) extends IntTree {
+  override def sum: Int = value
+  override def double: Leaf = Leaf(value * 2)
+}
+final case class IntNode(left: IntTree, right: IntTree) extends IntTree {
+  override def sum: Int = left.sum + right.sum
+  override def double: IntTree = IntNode(left.double, right.double)
+}
+
+object TreeOperations {
+  // same functionality using pattern matching
+  def sum(tree: IntTree): Int =
+    tree match {
+      case IntNode(left, right) => sum(left) + sum(right)
+      case Leaf(value) => value
+    }
+  def double(tree: IntTree): IntTree =
+    tree match {
+      case IntNode(left, right) => IntNode(double(left), double(right))
+      case Leaf(value) => Leaf(value * 2)
+    }
+}

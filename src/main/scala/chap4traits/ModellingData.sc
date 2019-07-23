@@ -1,3 +1,5 @@
+import chap4traits.{End, IntList, Pair}
+
 /* Modelling Data */
 
 /* has-a and */
@@ -157,15 +159,12 @@ assert(Calculator./(Failure("Badness"), 0) == Failure("Badness"))
 
 
 /* Recursive Data Types */
-sealed trait IntList
-
-case object End extends IntList
-final case class IntsPair(head: Int, tail: IntList) extends IntList
+// see IntList.scala
 
 // exercise
 def sum(list: IntList): Int =
   list match {
-    case IntsPair(h, t) => h + sum(t)
+    case Pair(h, t) => h + sum(t)
     case End => 0  // the base case - returns the identity of the function
   }
 
@@ -175,7 +174,7 @@ def sum(list: IntList): Int =
 //   a ^ 1 = a
 // etc.
 
-val example = IntsPair(1, IntsPair(2, IntsPair(3, End)))
+val example = Pair(1, Pair(2, Pair(3, End)))
 assert(sum(example) == 6)
 assert(sum(example.tail) == 5)
 assert(sum(End) == 0)
@@ -183,7 +182,7 @@ assert(sum(End) == 0)
 def length(list: IntList): Int =
   list match {
     case End => 0
-    case IntsPair(_, tail) => 1 + length(tail)
+    case Pair(_, tail) => 1 + length(tail)
   }
 
 // length tests
@@ -194,11 +193,11 @@ assert(length(End) == 0)
 def double(list: IntList): IntList =
   list match {
     case End => End
-    case IntsPair(hd, tl) => IntsPair(hd * 2, double(tl))
+    case Pair(hd, tl) => Pair(hd * 2, double(tl))
   }
 
-assert(double(example) == IntsPair(2, IntsPair(4, IntsPair(6, End))))
-assert(double(example.tail) == IntsPair(4, IntsPair(6, End)))
+assert(double(example) == Pair(2, Pair(4, Pair(6, End))))
+assert(double(example.tail) == Pair(4, Pair(6, End)))
 assert(double(End) == End)
 
 // Tree exercise

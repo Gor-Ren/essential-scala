@@ -22,6 +22,13 @@ sealed trait LinkedList[A] {
       case (0, Pair(hd, _)) => Success(hd)
       case (_, Pair(_, tl)) => tl(i - 1)
     }
+
+  // abstracting over sum, length and product
+  def fold(end: Int, f: (Int, Int) => Int): Int =
+    this match {
+      case End()        => end
+      case Pair(hd, tl) => f(hd, tl.fold(end, f))
+    }
 }
 
 final case class End[A]() extends LinkedList[A]
@@ -50,5 +57,5 @@ object LinkedListTest extends App {
   assert(example(0) == Success(1))
   assert(example(1) == Success(2))
   assert(example(2) == Success(3))
-  assert(example(3) == Failure("Index out of bounds"))
+  assert(example(3) == Failure("Index out of bounds!"))
 }

@@ -24,7 +24,7 @@ sealed trait LinkedList[A] {
     }
 
   // abstracting over sum, length and product
-  def fold(end: Int, f: (Int, Int) => Int): Int =
+  def fold[B](end: B, f: (A, B) => B): B =
     this match {
       case End()        => end
       case Pair(hd, tl) => f(hd, tl.fold(end, f))

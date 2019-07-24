@@ -1,5 +1,7 @@
 import java.util.Optional
 
+import chap5genericsfunctions.{Leaf, Node, Tree}
+
 // generics can be declared with the class, in which case they are available throughout body
 case class MyType[A](value: A) {}
 
@@ -49,4 +51,3 @@ testy(1)("hi")
 //
 //    With a single param list, the compiler is unable to use inference from one
 //    param to help other params; this leads to more explicit type declarations
-

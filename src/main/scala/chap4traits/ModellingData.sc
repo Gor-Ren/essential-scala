@@ -1,4 +1,4 @@
-import chap4traits.{End, IntList, Pair}
+import chap4traits.{IntEnd, IntList, IntPair}
 
 /* Modelling Data */
 
@@ -164,8 +164,8 @@ assert(Calculator./(Failure("Badness"), 0) == Failure("Badness"))
 // exercise
 def sum(list: IntList): Int =
   list match {
-    case Pair(h, t) => h + sum(t)
-    case End => 0  // the base case - returns the identity of the function
+    case IntPair(h, t) => h + sum(t)
+    case IntEnd => 0  // the base case - returns the identity of the function
   }
 
 // the identity is an element that doesn't change the result:
@@ -174,31 +174,31 @@ def sum(list: IntList): Int =
 //   a ^ 1 = a
 // etc.
 
-val example = Pair(1, Pair(2, Pair(3, End)))
+val example = IntPair(1, IntPair(2, IntPair(3, IntEnd)))
 assert(sum(example) == 6)
 assert(sum(example.tail) == 5)
-assert(sum(End) == 0)
+assert(sum(IntEnd) == 0)
 
 def length(list: IntList): Int =
   list match {
-    case End => 0
-    case Pair(_, tail) => 1 + length(tail)
+    case IntEnd => 0
+    case IntPair(_, tail) => 1 + length(tail)
   }
 
 // length tests
 assert(length(example) == 3)
 assert(length(example.tail) == 2)
-assert(length(End) == 0)
+assert(length(IntEnd) == 0)
 
 def double(list: IntList): IntList =
   list match {
-    case End => End
-    case Pair(hd, tl) => Pair(hd * 2, double(tl))
+    case IntEnd => IntEnd
+    case IntPair(hd, tl) => IntPair(hd * 2, double(tl))
   }
 
-assert(double(example) == Pair(2, Pair(4, Pair(6, End))))
-assert(double(example.tail) == Pair(4, Pair(6, End)))
-assert(double(End) == End)
+assert(double(example) == IntPair(2, IntPair(4, IntPair(6, IntEnd))))
+assert(double(example.tail) == IntPair(4, IntPair(6, IntEnd)))
+assert(double(IntEnd) == IntEnd)
 
 // Tree exercise
 sealed trait IntTree {

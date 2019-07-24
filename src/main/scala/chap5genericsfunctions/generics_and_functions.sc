@@ -1,4 +1,4 @@
-import chap5genericsfunctions.End
+import java.util.Optional
 
 // generics can be declared with the class, in which case they are available throughout body
 case class MyType[A](value: A) {}
@@ -25,3 +25,28 @@ final case class Failure[A](message: String) extends Result[A]
 //      () => B, or simplified to B
 //    case Pair(E, A), which is recursive, so function arg is:
 //      (E, B) => B
+
+/* Shorthand function notation*/
+
+(_: Int) * 2  // equivalent to (x: Int) => x * 2
+
+// convert method call to a function
+// Optional.of  // doesn't compile with 'missing args' error
+Optional.of _  // creates function from method
+
+// in places where the compiler can infer a function is required, it may be
+// possible to drop the underscore
+
+// Scala allows multiple parameter lists to be defined
+def testy(x: Int)(y: String) = x.toString + y
+
+// they are called using separate arg parens
+testy(1)("hi")
+
+// multiple param lists can improve readability
+//    but they also improve Scala's type inference: it can infer the type of an
+//    arg(s) in one param list, and use that solution to help inference.
+//
+//    With a single param list, the compiler is unable to use inference from one
+//    param to help other params; this leads to more explicit type declarations
+

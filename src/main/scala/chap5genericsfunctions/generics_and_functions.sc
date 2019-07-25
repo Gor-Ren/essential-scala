@@ -51,3 +51,19 @@ testy(1)("hi")
 //
 //    With a single param list, the compiler is unable to use inference from one
 //    param to help other params; this leads to more explicit type declarations
+
+// a flatmap is used when we have some F[A] and a function A => F[B] and we
+//    want a result F[B]. This could be to "flatten" out sublists in a
+//    List[List[A]] but equally it could be because we don't want an
+//    Either[Either[A]]
+
+// map and flatMap are immediately usable in collections, but there is a bigger
+//    picture use of sequencing computations, e.g. a sequence of computations
+//    which may fail. If we flatMap each of them, then a failure at any step
+//    fails the whole computation.
+
+// A type with a map and flatMap implementation is known as a monad.
+//    (there is more to it than this, but covered in a later course).
+// The general idea is that a monad represents a value in some context. We use
+//    an appropriate monad for the context, e.g. optional values when retrieving
+//    something with IO, or a sum type if we may succeed or fail.

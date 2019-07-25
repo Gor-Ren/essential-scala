@@ -1,6 +1,6 @@
 import java.util.Optional
 
-import chap5genericsfunctions.{Leaf, Node, Tree}
+import chap5genericsfunctions.{End, Leaf, LinkedList, Node, Tree}
 
 // generics can be declared with the class, in which case they are available throughout body
 case class MyType[A](value: A) {}

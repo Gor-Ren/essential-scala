@@ -65,3 +65,24 @@ object LinkedListTest extends App {
   assert(example(2) == Success(3))
   assert(example(3) == Failure("Index out of bounds!"))
 }
+
+object LinkedListExercises extends App {
+  val list: LinkedList[Int] = Pair(1, Pair(2, Pair(3, End())))
+
+  val doubled = list.map(_ * 2)
+  val plusOne = list.map(_ + 1)
+  val third: LinkedList[Float] = list.map(_.toFloat / 3f)
+  println(doubled, plusOne, third)
+
+  val xs = List(1, 2, 3)
+  val xsWithNegations = xs.flatMap(x => List(x, -x))
+
+  val ys: List[Maybe[Int]] = List(Full(3), Full(2), Full(1))
+
+  def oddToEmpty(x: Int): Maybe[Int] =
+    if (x % 2 == 0)
+      Full(x)
+    else
+      Empty()
+  val ysEvenOnly = ys.map(y => y.flatMap(oddToEmpty))
+}

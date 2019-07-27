@@ -2,7 +2,7 @@ package chap5genericsfunctions
 
 sealed trait Maybe[A] {
 
-  def fold[B](empty: B, full: A => B): B =
+  def fold[B](empty: B)(full: A => B): B =
     this match {
       case Empty()     => empty
       case Full(value) => full(value)
@@ -19,6 +19,15 @@ sealed trait Maybe[A] {
       case Empty()     => Empty()
       case Full(value) => fn(value)
     }
+
+  /* For bonus points, implement map in terms of flatMap */
+  def mapUsingFlatMap[B](fn: A => B): Maybe[B] = {
+    this.flatMap(x => Full(fn(x)))
+  }
+
+  def mapUsingFold[B](fn: A => B): Maybe[B] = {
+    fold(Empty(): Maybe[B])(v => Full(fn(v)))
+  }
 }
 
 final case class Empty[A]() extends Maybe[A]

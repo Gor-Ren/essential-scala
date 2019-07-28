@@ -1,7 +1,7 @@
 package chap5genericsfunctions
 
 /** A re-implementation of Scala's [[Either]] type */
-sealed trait Sum[A, B] {
+sealed trait Sum[+A, +B] {
 
   def fold[C](fail: A => C)(pass: B => C): C =
     this match {
@@ -17,12 +17,12 @@ sealed trait Sum[A, B] {
     }
 
   /** Transforms a pass and leaves a fail unaffected */
-  def flatMap[C](fn: B => Sum[A, C]): Sum[A, C] =
+  def flatMap[AA >: A, C](fn: B => Sum[AA, C]): Sum[AA, C] =
     this match {
       case Fail(v) => Fail(v)
       case Pass(v) => fn(v)
     }
 }
 
-final case class Fail[A, B](value: A) extends Sum[A, B]
-final case class Pass[A, B](value: B) extends Sum[A, B]
+final case class Fail[+A](value: A) extends Sum[A, Nothing]
+final case class Pass[+B](value: B) extends Sum[Nothing, B]

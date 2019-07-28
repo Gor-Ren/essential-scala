@@ -83,6 +83,6 @@ object LinkedListExercises extends App {
     if (x % 2 == 0)
       Full(x)
     else
-      Empty()
+      Empty
   val ysEvenOnly = ys.map(y => y.flatMap(oddToEmpty))
 }

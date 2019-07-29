@@ -67,3 +67,18 @@ testy(1)("hi")
 // The general idea is that a monad represents a value in some context. We use
 //    an appropriate monad for the context, e.g. optional values when retrieving
 //    something with IO, or a sum type if we may succeed or fail.
+
+/* Variance */
+// we want to allow a generic A[B] to be able to use subclasses of B.
+// This would allow us to define a case object Empty[Nothing] which
+// can be used for all Maybe[B]s.container
+
+// A Foo[T] is invariant in terms of T; Foo[A] and Foo[B] are unrelated
+// regardless of the association between A and B.
+
+// Type Foo[+T] is covariant in terms of T, meaning that Foo[A] is a supertype
+// of Foo[B] if A is a supertype of B. (Most Scala collection classes are
+// covariant).
+
+// Type Foo[-T] is contravariant in terms of T: Foo[A] is a subtype of Foo[B] if
+// A is a supertype of B. (It gets used in function arguments).

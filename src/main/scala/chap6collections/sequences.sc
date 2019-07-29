@@ -41,5 +41,21 @@ val list = 1 :: 2 :: 3 :: Nil  // :: is equiv to +::
 
 4 :: 5 :: list
 
+// list concat
+list ::: list
+
+// :: and ::: are list-specific, whereas +:, :+ and ++ are for all Sequences
+
 // List.apply is a more convenient constructor
 List(1, 2, 3)
+
+// linked list is:
+//    constant-time in prepand, head and tail ops
+//    linear-time in append, apply and update
+
+// the default sequences in Scala are immutable
+
+/* Exercises*/
+val animals = Seq("cat", "dog", "penguin")
+"mouse" +: animals :+ "tyrannosaurus"
+2 +: animals  // type becomes Seq[Any]

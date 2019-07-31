@@ -85,3 +85,28 @@ val earliestFilm: Film = directors
   .flatMap(_.films)
   .sortWith((f1, f2) => f1.yearOfRelease < f2.yearOfRelease)
   .head
+
+/* Exercises Repeated: with for comprehensions */
+// nolan films
+for (film <- nolan.films)
+  yield film.name
+
+// all films
+for {
+  director <- directors
+  film <- director.films
+} yield film.name
+
+// films in order of IMDB rating
+val films = for {
+  director <- directors
+  film <- director.films
+} yield film
+
+films.sortWith(_.imdbRating > _.imdbRating)
+
+// print listing
+for {
+  director <- directors
+  film <- director.films
+} println(s"Tonight only! ${film.name.toUpperCase} by ${director.lastName.toUpperCase}")

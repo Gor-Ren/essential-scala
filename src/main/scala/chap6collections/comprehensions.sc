@@ -38,3 +38,28 @@ for (
 ) yield {  // we can also use a braced block for the yield
   el * 2
 }
+
+/* More features */
+
+// filtering
+for {
+  x <- Seq(1, 2, 3, 4) if x > 2
+  // (converts to a withFilter or filter call)
+} println(x)
+
+// parallel iteration, with pattern matching
+for {
+  (x, y) <- Seq(1, 2, 3).zip(Seq(4, 5, 6))
+} println(s"x=$x, y=$y")
+
+// enumerating elements
+for {
+  (x, y) <- Seq(1, 2, 3).zipWithIndex
+} println(s"x=$x, y=$y")
+
+// assigning intermediate values
+for {
+  x <- 1 to 5  // a way to define a range
+  interValue = math.min(2, x)  // intermediate val
+  y <- Some(2)
+} println(s"${interValue + y}")

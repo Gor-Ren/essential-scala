@@ -25,9 +25,51 @@ final case class Rational(numerator: Int, denominator: Int) {
   def toDouble: Double = numerator.toDouble / denominator.toDouble
 }
 
-implicit val rationalOrd: Ordering[Rational] = Ordering.fromLessThan((x, y) =>
-  x.toDouble < y.toDouble
-)
+object Rational {
+  implicit val rationalOrd: Ordering[Rational] = Ordering.fromLessThan((x, y) =>
+    x.toDouble < y.toDouble
+  )
+}
 
 assert(List(Rational(1, 2), Rational(3, 4), Rational(1, 3)).sorted ==
   List(Rational(1, 3), Rational(1, 2), Rational(3, 4)))
+
+/* Implicit scope */
+// Local scope: the compiler first looks in the local scope:
+// local values, within an enclosing class/object/trait, and imports.
+
+// With lower priority, it looks in the companion objects of the type class and
+// of the type parameter.
+
+// The compiler only emits an ambiguity error if there are two possible
+// implicit values with the same priority. E.g. we can override a companion's
+// ordering by defining/importing our own in the local scope.
+
+// Prefer to put type class instances (such as Ordering) in the companion class
+// if possible. It is possible when:
+//  - there is a single type class instance for the type
+//  - you can edit the source code for the type that the instance is being
+//    defined for
+// Then users may override this sensible default using local scope if required.
+
+/* Exercises */
+final case class Order(units: Int, unitPrice: Double) {
+  val totalPrice: Double = units * unitPrice
+}
+
+// we will package 3 orderings in their own objects to allow specific imports
+object Order {
+  // ordering by total price of order seems like a reasonable default -> goes
+  // in companion
+  implicit val totalPriceOrdering: Ordering[Order] =
+    Ordering.fromLessThan(_.totalPrice < _.totalPrice)
+}
+
+// other orderings in separate objects to allow importing
+object OrderUnitsOrdering {
+  implicit val unitsOrdering: Ordering[Order] = Ordering.fromLessThan(_.units < _.units)
+}
+
+object OrderUnitPriceOrdering {
+  implicit val unitPriceOrdering: Ordering[Order] = Ordering.fromLessThan(_.unitPrice < _.unitPrice)
+}

@@ -63,3 +63,57 @@ object NameAndEmailEqual extends Equal[Person] {
   override def isEqual(v1: Person, v2: Person) =
     v1.name == v2.name && v1.email == v2.email
 }
+
+// the problem here is that we might need to write a lot of code to use these
+// objects.
+
+// therefore we turn to implicit parameters:
+object HtmlUtil {
+
+  def writeToHtml[A](data: A)(implicit writer: HtmlWriter[A]): String = {
+    // N.B.: `implicit` applies to whole param list! => separate into own param
+    // group
+    writer.toHtml(data)
+  }
+}
+
+implicit val writer = new MyDataWriter
+
+HtmlUtil.writeToHtml(MyData())  // implicit passed in
+
+// we can write a companion object with an apply function to concisely get
+// type class instances:
+object HtmlWriter {
+  def apply[A](implicit writer: HtmlWriter[A]): HtmlWriter[A] = writer
+
+  // compare this to the alternative, with more indirection:
+  // def write[A](in: A)(implicit writer: HtmlWriter[A]): String =
+  //   writer.write(in)
+}
+
+// then we can pass in the class as an arg, and using the no-param apply method:
+HtmlWriter[MyData].toHtml(MyData())
+
+/* Exercises */
+object Eq {
+  def apply[A](v1: A, v2: A)(implicit eq: Equal[A]): Boolean =
+    eq.isEqual(v1, v2)
+}
+
+val p = Person("tom", "tom@myspace.com")
+// if we don't declare this implicit...:
+//implicit val pEq = NameAndEmailEqual
+// ...we get error: Error:(104, 11) could not find implicit value for parameter
+// eq: Equal[Person] Eq(p, p)
+
+// alternatively we can import our implicit:
+object NameAndEmailEqualImplicit {
+  implicit object NameAndEmailEquals extends Equal[Person] {
+    override def isEqual(v1: Person, v2: Person) =
+      v1.name == v2.name && v1.email == v2.email
+  }
+}
+
+import NameAndEmailEqualImplicit.NameAndEmailEquals
+
+Eq(p, p)

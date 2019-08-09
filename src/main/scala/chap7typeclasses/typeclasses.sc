@@ -117,3 +117,87 @@ object NameAndEmailEqualImplicit {
 import NameAndEmailEqualImplicit.NameAndEmailEquals
 
 Eq(p, p)
+
+// we can use `type enrichment` to expand the functionality of classes
+
+implicit class ExtraStringMethods(str: String) {
+  val vowels = Seq('a', 'e', 'i', 'o', 'u')
+
+  def numberOfVowels: Int = str.filter(vowels contains _).length
+
+}
+
+new ExtraStringMethods("testyuiop").numberOfVowels
+
+// it's a bit unwieldy to make the constructor call
+// instead, we can make the class implicit and Scala will insert for us:
+"hurrdurr".numberOfVowels
+
+// this works well when combined with type classes:
+implicit class HtmlOps[T](data: T) {
+  def toHtml(implicit writer: HtmlWriter[T]) = writer.toHtml(data)
+}
+
+MyData().toHtml  // new method call!
+
+/* Exercises */
+trait Describer[A] {
+  def describe(value: A)(implicit describer: Describer[A]): Unit
+}
+
+object IntYeahDescriber extends Describer[Int] {
+  override def describe(i: Int)(implicit describer: Describer[Int]): Unit =
+    (0 until i).foreach(_ => println("Oh yeah!"));
+}
+
+implicit class ExtraIntMethods(n: Int) {
+  def yeah()(implicit describer: Describer[Int]): Unit =
+    describer.describe(n)
+
+  // note: for single implementation, we don't need the type class! e.g.:
+  def times(f: Int => Unit): Unit =
+    for {
+      i <- 0 until n
+    } f(i)
+  // defined in terms of `times`
+  def otherYeah(): Unit = times(_ => println("Oh yeah!"))
+}
+
+implicit val intDescriber = IntYeahDescriber
+1.yeah()
+(-1).yeah()
+3.yeah()
+
+2.otherYeah()
+3.times(i => println(s"Look - it's the number $i!"))
+
+/* Equality exercise */
+object StringEqualIgnoringCase extends Equal[String] {
+  override def isEqual(v1: String, v2: String): Boolean =
+    v1.equalsIgnoreCase(v2)
+}
+
+implicit val strEqualIgnoreCase = StringEqualIgnoringCase
+
+implicit class ExtraStringOps(str: String) {
+  def ===(other: String)(implicit isEq: Equal[String]): Boolean =
+    isEq.isEqual(str, other)
+}
+
+"abcd".===("ABCD")
+"abcd" === "ABCD"
+
+/* Context Bounds */
+// a more concise notation:
+def pageTemplate[A : HtmlWriter](body: A): String = {
+  val renderedBody = body.toHtml
+  s"<html><head>hi</head><body>$renderedBody</body></html>"
+}
+
+// this is syntactic sugar for:
+// def pageTemplate[A](body: A)(implicit writer: HtmlWriter[A]) ...
+
+// we don't have a variable bound to the HtmlWriter, but this is fine since we
+// use it implicitly and simply require it in scope
+
+// to find an implicit value (useful when debugging) we can use `implicitly[A]`
